@@ -1,2 +1,2 @@
 # Physics_Engine_JavaAPI
-A Java API to manage a physics engine.
+A physics engine API for Java
