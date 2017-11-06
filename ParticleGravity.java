@@ -4,7 +4,7 @@ public class ParticleGravity implements ParticleForceGenerator {
 	public final Vec2D gravity;
 	
 	public ParticleGravity(Vec2D vector) {
-		this.gravity=vector;
+		this.gravity = vector;
 	}
 	
 	@Override
