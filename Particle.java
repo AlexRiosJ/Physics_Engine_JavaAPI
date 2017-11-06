@@ -1,29 +1,33 @@
 package com.rad.vf;
 
-public class Particle{
-	private Vec2D position,velocity,acceleration,forceAccum,torque;
-	private double damping, inverseMass; //Amortiguación
+public class Particle {
+	private Vec2D position, velocity, acceleration, forceAccum, torque;
+	private double damping, inverseMass; // AmortiguaciÃ³n
 	
-	//CONTROL DE EXCEPCION PORQUE LA MASA NO PUEDE SER 0.
+	// CONTROL DE EXCEPCION PORQUE LA MASA NO PUEDE SER 0.
 	
-	Particle(Vec2D pos,Vec2D vel, Vec2D acc, Vec2D f,double damp,double mass){
-		position=pos;
-		velocity=vel;
-		acceleration=acc;
-		forceAccum=f;
-		damping=damp;
-		inverseMass=1.0/mass;
+	Particle(Vec2D position, Vec2D velocity, Vec2D acceleration, Vec2D forceAcumm, double damping, double mass){
+		this.position     = position;
+		this.velocity     = velocity;
+		this.acceleration = acceleration;
+		this.forceAccum   = forceAcumm;
+		this.damping      = damping;
+		this.inverseMass  = 1.0 / mass;
 	}
 	
 	void integrate(double time) {
 		assert(time > 0.0);
+		
 		// Update linear position.
 		position.addScaledVector(velocity, time);
-		position.addScaledVector(acceleration, time*time*0.5);
+		position.addScaledVector(acceleration, time * time * 0.5);
+		
 		// Work out the acceleration from the force.
-		acceleration.addScaledVector(forceAccum,inverseMass);
+		acceleration.addScaledVector(forceAccum, inverseMass);
+		
 		// Update linear velocity from the acceleration.
 		velocity.addScaledVector(acceleration, time);
+		
 		// Impose drag.
 		velocity.multiply(Math.pow(damping, time));
 	}
@@ -99,8 +103,8 @@ public class Particle{
 
 
 	public void addForce(Vec2D force) {
-		this.forceAccum.setX(this.forceAccum.getX()+force.getX());
-		this.forceAccum.setY(this.forceAccum.getY()+force.getY());
+		this.forceAccum.setX(this.forceAccum.getX() + force.getX());
+		this.forceAccum.setY(this.forceAccum.getY() + force.getY());
 		//torque
 	}
 	
@@ -108,6 +112,5 @@ public class Particle{
 		this.forceAccum.setX(0);
 		this.forceAccum.setY(0);
 	}
-	
 	
 }
