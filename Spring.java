@@ -5,8 +5,8 @@ public class Spring implements ParticleForceGenerator {
 	private Particle p;
 	private double k, length;
 	
-	Spring(Particle other, double springCtt, double length){
-		this.p 		= other;
+	Spring(Particle anotherParticle, double springCtt, double length){
+		this.p 		= anotherParticle;
 		this.k 		= springCtt;
 		this.length	= length;
 	}
