@@ -3,12 +3,12 @@ package com.rad.vf;
 public class Spring implements ParticleForceGenerator {
 
 	private Particle p;
-	private double k,length;
+	private double k, length;
 	
-	Spring(Particle other, double spring_ctt, double length){
-		this.p=other;
-		this.k=spring_ctt;
-		this.length=length;
+	Spring(Particle other, double springCtt, double length){
+		this.p 		= other;
+		this.k 		= springCtt;
+		this.length	= length;
 	}
 	
 	@Override
