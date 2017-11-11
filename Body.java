@@ -1,5 +1,5 @@
 package com.rad.vf;
-public class Body extends Particle{
+public class Body extends Particle {
 
 	double radius, height, mass, coefficientOfRestitution;
 	
