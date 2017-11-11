@@ -59,14 +59,17 @@ public class Vec2D {
 	}
 	
 	public static double distanceFrom(Vec2D vecA, Vec2D vecB) {
-		return vecA.getMagnitude()- vecB.getMagnitude();
+		return vecA.getMagnitude() - vecB.getMagnitude();
 	}
 	
 	public static double distanceFromSquared(Vec2D vecA, Vec2D vecB) {
-		return vecA.getSquaredMagnitude()- vecB.getSquaredMagnitude();
+		return vecA.getSquaredMagnitude() - vecB.getSquaredMagnitude();
 	}
 	
-	public boolean equals(Vec2D foreign) {
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof Vec2D)) return false;
+		
 		return	x == foreign.getX() && y == foreign.getY();
 	}
 	
@@ -78,12 +81,19 @@ public class Vec2D {
 	
 	//Métodos de objeto
 	
+	// POSIBILIDAD DE AÑADIR ESTE MÉTODO DE OBJETO (RIOS)
+//	public void normalize() {
+//		double m = this.getMagnitude();
+//		this.x /= m;
+//		this.y /= m;
+//	}
+	
 	public void sum(Vec2D vecB){
 		 this.x += vecB.getX();
 		 this.y += vecB.getY();
 	}
 	public double getMagnitude() {
-		return Math.sqrt((x * x) + (y * y));
+		return Math.sqrt((x * x) + (y * y));		
 	}
 	
 	public double getSquaredMagnitude() {
