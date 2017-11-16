@@ -111,6 +111,7 @@ public class Particle {
 	public void clearAcc() {
 		this.forceAccum.setX(0);
 		this.forceAccum.setY(0);
+		//can i do this?
 	}
 	
 }
