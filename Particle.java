@@ -1,3 +1,4 @@
+
 package com.rad.vf;
 
 public class Particle {
@@ -15,21 +16,18 @@ public class Particle {
 		this.inverseMass  = 1.0 / mass;
 	}
 	
-	void integrate(double time) {
-		assert(time > 0.0);
-		
+	public void integrate(double time) {
 		// Update linear position.
 		position.addScaledVector(velocity, time);
-		position.addScaledVector(acceleration, time * time * 0.5);
-		
-		// Work out the acceleration from the force.
-		acceleration.addScaledVector(forceAccum, inverseMass);
-		
-		// Update linear velocity from the acceleration.
-		velocity.addScaledVector(acceleration, time);
-		
-		// Impose drag.
-		velocity.multiply(Math.pow(damping, time));
+		/*
+			position.addScaledVector(acceleration, time*time*0.5);
+			// Work out the acceleration from the force.
+			acceleration.addScaledVector(forceAccum,inverseMass);
+			// Update linear velocity from the acceleration.
+			velocity.addScaledVector(acceleration, time);
+			// Impose drag.
+			velocity.multiply(Math.pow(damping, time));
+		*/
 	}
 	
 	public Vec2D getPosition() {
