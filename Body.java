@@ -4,11 +4,11 @@ public class Body extends Particle {
 
 	public double radius, height, mass, coefficientOfRestitution;
 	
-	public Body(double mass,double radius,double coefficient){
+	public Body(double mass, double radius, double coefficient){
 		this(null, null, null, null, 0, mass);
-		this.mass=mass;
-		this.radius=radius;
-		this.coefficientOfRestitution=coefficient;
+		this.mass = mass;
+		this.radius = radius;
+		this.coefficientOfRestitution = coefficient;
 	}
 	
 	public Body(Vec2D position, Vec2D velocity, Vec2D accel, Vec2D force, double damp, double mass) {
