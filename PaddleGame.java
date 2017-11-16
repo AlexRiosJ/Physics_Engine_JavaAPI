@@ -7,9 +7,8 @@ import java.awt.event.*;
 import javax.swing.event.*;
 import javax.swing.Timer;
 
-public class PaddleGame extends JFrame 
-          implements ActionListener, ChangeListener
-{
+public class PaddleGame extends JFrame implements ActionListener, ChangeListener {
+ 
   private JTextField vxTextField;
   private JTextField vzTextField;
 
@@ -41,16 +40,16 @@ public class PaddleGame extends JFrame
   private Timer gameTimer;
 
   public PaddleGame() {
-
+    
     //  Initialize ball location, velocity, and
     //  paddle location.
-    ballVx = 100.0;
-    ballVz = -71.0;
-    ballX = 100.0;
-    ballZ = 100.0;
-    paddleZ = 100;
-    paddleHeight = 40;
-    ballRadius = 5.0;
+    ballVx       = 100.0;
+    ballVz       = -71.0;
+    ballX        = 100.0;
+    ballZ        = 100.0;
+    paddleZ      = 100;
+    paddleHeight =  40;
+    ballRadius   =  5.0;
 
     //  Create a Timer object that will be used
     //  to slow the action down and an ActionListener
