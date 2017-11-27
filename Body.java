@@ -1,8 +1,8 @@
-package com.rad.vf;
+package com.rad.classes;
 
 public class Body extends Particle {
 
-	public double radius, height, mass, coefficientOfRestitution;
+	private double radius, height, length, mass, coefficientOfRestitution;
 	
 	public Body(double mass, double radius, double coefficient){
 		this(null, null, null, null, 0, mass);
@@ -22,6 +22,10 @@ public class Body extends Particle {
 	public double getHeight() {
 		return height;
 	}
+	
+	public double getLength() {
+		return length;
+	}
 
 	public double getMass() {
 		return mass;
@@ -37,6 +41,10 @@ public class Body extends Particle {
 
 	public void setHeight(double height) {
 		this.height = height;
+	}
+	
+	public void setLength(double length) {
+		this.length = length;
 	}
 
 	public void setMass(double mass) {
