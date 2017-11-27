@@ -69,7 +69,7 @@ public class Vec2D {
 	@Override
 	public boolean equals(Object o) {
 		if(!(o instanceof Vec2D)) return false;
-		
+		Vec2D foreign=(Vec2D)o;
 		return	x == foreign.getX() && y == foreign.getY();
 	}
 	
