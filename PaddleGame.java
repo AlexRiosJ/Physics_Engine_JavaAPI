@@ -1,329 +1,332 @@
-package com.tests;
+package com.rad.tests;
 
-import javax.swing.*;
-import java.awt.*;
-import javax.swing.border.BevelBorder;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.*;
-import javax.swing.event.*;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.Timer;
+import javax.swing.border.BevelBorder;
+import javax.swing.event.*;
 
-public class PaddleGame extends JFrame implements ActionListener, ChangeListener {
- 
-  private JTextField vxTextField;
-  private JTextField vzTextField;
+import com.rad.vf.*;
 
-  private JLabel vxLabel;
-  private JLabel vzLabel;
-  private JLabel sliderLabel;
+public class RadPaddle extends JFrame implements ActionListener, ChangeListener {
 
-  private JSlider paddleSlider;
+	Body b, paddle;
 
-  private JButton startButton;
-  private JButton resetButton;
-  private JPanel drawingPanel;
-  private GridBagConstraints gbc;
+	private JTextField vxTextField;
+	private JTextField vzTextField;
 
-  //  These fields store ball data and the coefficient 
-  //  of restitution.
-  private double ballVx;
-  private double ballVz;
-  private double ballX;
-  private double ballZ;
-  private double paddleZ;
-  private int paddleHeight;
-  private double ballRadius; //  radius of ball
+	private JLabel vxLabel;
+	private JLabel vzLabel;
+	private JLabel sliderLabel;
 
-  //  These elements are used to control the execution
-  //  speed of the game. Without them, the game would
-  //  run too quickly.
-  private GameUpdater gameUpdater;
-  private Timer gameTimer;
+	private JSlider paddleSlider;
 
-  public PaddleGame() {
-    
-    //  Initialize ball location, velocity, and
-    //  paddle location.
-    ballVx       = 100.0;
-    ballVz       = -71.0;
-    ballX        = 100.0;
-    ballZ        = 100.0;
-    paddleZ      = 100;
-    paddleHeight =  40;
-    ballRadius   =  5.0;
+	private JButton startButton;
+	private JButton resetButton;
+	private JPanel drawingPanel;
+	private GridBagConstraints gbc;
 
-    //  Create a Timer object that will be used
-    //  to slow the action down and an ActionListener
-    //  that the Timer will call. The timeDelay variable
-    //  is the time delay in milliseconds.
-    gameUpdater = new GameUpdater();
-    int timeDelay = 50;
-    gameTimer = new Timer(timeDelay, gameUpdater);
+	private GameUpdater gameUpdater;
+	private Timer gameTimer;
+	
+	double mass = 10, coefficient=1;//.94 coefficient of a steel wall
 
-    //  Create JTextField objects to input the initial 
-    //  velocity components of the ball.
-    vxTextField = new JTextField("100.0",6);
-    vzTextField = new JTextField("-80.0",6);
+	public RadPaddle() {
 
-    //  Create some JLabels
-    vxLabel = new JLabel("x-velocity, m/s");
-    vzLabel = new JLabel("z-velocity, m/s");
-    sliderLabel = new JLabel("Paddle location");
+		Vec2D ballV = new Vec2D(100, -71), ballP = new Vec2D(100, 100), paddleP = new Vec2D(0, 100);
+		b = new Body(ballP, ballV, new Vec2D(0, -9.81), ballV, 0, mass);
+		paddle = new Body(paddleP, null, null, null, 0, 0);
+		b.radius = 5.0;
+		paddle.height = 50;
 
-    //  Create a JSlider that will move the paddle up and down.
-    paddleSlider = new JSlider(JSlider.VERTICAL, paddleHeight/2,
-                               200 - paddleHeight/2, (int)paddleZ);
-    paddleSlider.addChangeListener(this);
+		// Create a Timer object that will be used
+		// to slow the action down and an ActionListener
+		// that the Timer will call. The timeDelay variable
+		// is the time delay in milliseconds.
+		gameUpdater = new GameUpdater(b, paddle);
+		int timeDelay = 10;
+		gameTimer = new Timer(timeDelay, gameUpdater);
 
-    //  Create a JButton that will start the balls moving
-    startButton = new JButton("Start");
-    startButton.setBorder(new BevelBorder(BevelBorder.RAISED));
-    startButton.setPreferredSize(new Dimension(60,35));
-    startButton.addActionListener(this);
+		// Create JTextField objects to input the initial
+		// velocity components of the ball.
+		vxTextField = new JTextField("10.0", 6);
+		vzTextField = new JTextField("7.0", 6);
 
-    //  Create a JButton that will update the drawing area.
-    resetButton = new JButton("Reset");
-    resetButton.setBorder(new BevelBorder(BevelBorder.RAISED));
-    resetButton.setPreferredSize(new Dimension(60,35));
-    resetButton.addActionListener( new ActionListener() {
-      public void actionPerformed(ActionEvent ae) {
-        //  stop the timer.
-        gameTimer.stop();
+		// Create some JLabels
+		vxLabel = new JLabel("X-velocity, m/s");
+		vzLabel = new JLabel("Y-velocity, m/s");
+		sliderLabel = new JLabel("Ubicación del Paddle");
 
-        //  Reset the ball location, velocity, and
-        //  paddle location.
-        ballVx = 100.0;
-        ballVz = -80.0;
-        ballX = 100.0;
-        ballZ = 100.0;
-        paddleZ = 100;
-        paddleSlider.setValue((int)paddleZ);
-  
-        //  Update the display.
-        updateDisplay();
-      }  
-    });
+		// Create a JSlider that will move the paddle up and down.
+		paddleSlider = new JSlider(JSlider.VERTICAL, (int) paddle.height / 2, (int) (200 - paddle.height / 2),
+				(int) paddle.getPosition().getY());
+		paddleSlider.addChangeListener(this);
 
-    //  Create a JTextArea that will display the results
-    drawingPanel = new JPanel();
-    drawingPanel.setPreferredSize(new Dimension(301, 201));
+		// Create a JButton that will start the balls moving
+		startButton = new JButton("Start");
+		startButton.setBorder(new BevelBorder(BevelBorder.RAISED));
+		startButton.setPreferredSize(new Dimension(60, 35));
+		startButton.addActionListener(this);
 
-    //  Place components on a panel using a GridBagLayout
-    JPanel northPanel = new JPanel();
-    GridBagLayout gridBagLayout1 = new GridBagLayout();
-    northPanel.setLayout(gridBagLayout1);
+		// Create a JButton that will update the drawing area.
+		resetButton = new JButton("Reset");
+		resetButton.setBorder(new BevelBorder(BevelBorder.RAISED));
+		resetButton.setPreferredSize(new Dimension(60, 35));
+		resetButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				// stop the timer.
+				gameTimer.stop();
 
-    int col;
-    int row;
-    int numCol = 1;
-    int numRow = 1;
-    Insets insets = new Insets(5, 3, 5, 3);
+				// Reset the ball location, velocity, and
+				// paddle location.
+				b.getVelocity().setX(100.0);
+				b.getVelocity().setY(-80.0);
+				b.getPosition().setX(100.0);
+				b.getPosition().setY(100.0);
+				paddle.getPosition().setY(100.0);
+				paddleSlider.setValue((int) paddle.getPosition().getY());
 
-    row = 0;
-    col = 0;
-    gbc = new GridBagConstraints(col, row, numCol, numRow,
-                 0.0, 0.0, GridBagConstraints.EAST,
-                 GridBagConstraints.NONE, insets, 0, 0);
-    gridBagLayout1.setConstraints(vxLabel, gbc);
+				// Update the display.
+				updateDisplay();
+			}
+		});
 
-    col = 1;
-    gbc = new GridBagConstraints(col, row, numCol, numRow,
-                 0.0, 0.0, GridBagConstraints.WEST,
-                 GridBagConstraints.NONE, insets, 0, 0);
-    gridBagLayout1.setConstraints(vxTextField, gbc);
+		// Create a JTextArea that will display the results
+		drawingPanel = new JPanel();
+		drawingPanel.setPreferredSize(new Dimension(301, 201));
 
-    row = 1;
-    col = 0;
-    gbc = new GridBagConstraints(col, row, numCol, numRow,
-                 0.0, 0.0, GridBagConstraints.EAST,
-                 GridBagConstraints.NONE, insets, 0, 0);
-    gridBagLayout1.setConstraints(vzLabel, gbc);
+		// Place components on a panel using a GridBagLayout
+		JPanel northPanel = new JPanel();
+		GridBagLayout gridBagLayout1 = new GridBagLayout();
+		northPanel.setLayout(gridBagLayout1);
 
-    col = 1;
-    gbc = new GridBagConstraints(col, row, numCol, numRow,
-                 0.0, 0.0, GridBagConstraints.WEST,
-                 GridBagConstraints.NONE, insets, 0, 0);
-    gridBagLayout1.setConstraints(vzTextField, gbc);
+		int col;
+		int row;
+		int numCol = 1;
+		int numRow = 1;
+		Insets insets = new Insets(5, 3, 5, 3);
 
-    row = 0;
-    col = 2;
-    gbc = new GridBagConstraints(col, row, numCol, numRow,
-                 0.0, 0.0, GridBagConstraints.EAST,
-                 GridBagConstraints.NONE, insets, 0, 0);
-    gridBagLayout1.setConstraints(startButton, gbc);
+		row = 0;
+		col = 0;
+		gbc = new GridBagConstraints(col, row, numCol, numRow, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.NONE, insets, 0, 0);
+		gridBagLayout1.setConstraints(vxLabel, gbc);
 
-    col = 3;
-    gbc = new GridBagConstraints(col, row, numCol, numRow,
-                 0.0, 0.0, GridBagConstraints.EAST,
-                 GridBagConstraints.NONE, insets, 0, 0);
-    gridBagLayout1.setConstraints(resetButton, gbc);
+		col = 1;
+		gbc = new GridBagConstraints(col, row, numCol, numRow, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.NONE, insets, 0, 0);
+		gridBagLayout1.setConstraints(vxTextField, gbc);
 
-    northPanel.add(vxLabel);
-    northPanel.add(vxTextField);
-    northPanel.add(vzLabel);
-    northPanel.add(vzTextField);
-    northPanel.add(startButton);
-    northPanel.add(resetButton);
+		row = 1;
+		col = 0;
+		gbc = new GridBagConstraints(col, row, numCol, numRow, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.NONE, insets, 0, 0);
+		gridBagLayout1.setConstraints(vzLabel, gbc);
 
-    //  Place components on a panel using a GridBagLayout
-    JPanel westPanel = new JPanel();
-    GridBagLayout gridBagLayout3 = new GridBagLayout();
-    westPanel.setLayout(gridBagLayout3);
+		col = 1;
+		gbc = new GridBagConstraints(col, row, numCol, numRow, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.NONE, insets, 0, 0);
+		gridBagLayout1.setConstraints(vzTextField, gbc);
 
-    row = 0;
-    col = 0;
-    gbc = new GridBagConstraints(col, row, numCol, numRow,
-                 0.0, 0.0, GridBagConstraints.EAST,
-                 GridBagConstraints.NONE, insets, 0, 0);
-    gridBagLayout3.setConstraints(sliderLabel, gbc);
+		row = 0;
+		col = 2;
+		gbc = new GridBagConstraints(col, row, numCol, numRow, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.NONE, insets, 0, 0);
+		gridBagLayout1.setConstraints(startButton, gbc);
 
-    col = 1;
-    gbc = new GridBagConstraints(col, row, numCol, numRow,
-                 0.0, 0.0, GridBagConstraints.WEST,
-                 GridBagConstraints.NONE, insets, 0, 0);
-    gridBagLayout3.setConstraints(paddleSlider, gbc);
+		col = 3;
+		gbc = new GridBagConstraints(col, row, numCol, numRow, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.NONE, insets, 0, 0);
+		gridBagLayout1.setConstraints(resetButton, gbc);
 
-    westPanel.add(sliderLabel);
-    westPanel.add(paddleSlider);
+		northPanel.add(vxLabel);
+		northPanel.add(vxTextField);
+		northPanel.add(vzLabel);
+		northPanel.add(vzTextField);
+		northPanel.add(startButton);
+		northPanel.add(resetButton);
 
-    //  The drawing panel.
-    JPanel eastPanel = new JPanel();
-    GridBagLayout gridBagLayout2 = new GridBagLayout();
-    eastPanel.setLayout(gridBagLayout2);
+		// Place components on a panel using a GridBagLayout
+		JPanel westPanel = new JPanel();
+		GridBagLayout gridBagLayout3 = new GridBagLayout();
+		westPanel.setLayout(gridBagLayout3);
 
-    row = 0;
-    col = 0;
-    gbc = new GridBagConstraints(col, row, numCol, numRow,
-                 0.0, 0.0, GridBagConstraints.CENTER,
-                 GridBagConstraints.NONE, 
-                 new Insets(10, 10, 10, 20), 0, 0);
-    gridBagLayout2.setConstraints(drawingPanel, gbc);
+		row = 0;
+		col = 0;
+		gbc = new GridBagConstraints(col, row, numCol, numRow, 0.0, 0.0, GridBagConstraints.EAST,
+				GridBagConstraints.NONE, insets, 0, 0);
+		gridBagLayout3.setConstraints(sliderLabel, gbc);
 
-    eastPanel.add(drawingPanel);
+		col = 1;
+		gbc = new GridBagConstraints(col, row, numCol, numRow, 0.0, 0.0, GridBagConstraints.WEST,
+				GridBagConstraints.NONE, insets, 0, 0);
+		gridBagLayout3.setConstraints(paddleSlider, gbc);
 
-    //  Add the JPanel objects to the content pane
-    getContentPane().setLayout(new BorderLayout());
-    getContentPane().add(northPanel, BorderLayout.NORTH);
-    getContentPane().add(eastPanel, BorderLayout.EAST);
-    getContentPane().add(westPanel, BorderLayout.WEST);
+		westPanel.add(sliderLabel);
+		westPanel.add(paddleSlider);
 
-    //  Add a title to the JFrame, size it, and make it visible.
-    setTitle("Paddle Game");
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setBounds(100,100,500,350);
-    setVisible(true);
+		// The drawing panel.
+		JPanel eastPanel = new JPanel();
+		GridBagLayout gridBagLayout2 = new GridBagLayout();
+		eastPanel.setLayout(gridBagLayout2);
 
-    //  Update the GUI display
-    updateDisplay(); 
-  }
+		row = 0;
+		col = 0;
+		gbc = new GridBagConstraints(col, row, numCol, numRow, 0.0, 0.0, GridBagConstraints.CENTER,
+				GridBagConstraints.NONE, new Insets(10, 10, 10, 20), 0, 0);
+		gridBagLayout2.setConstraints(drawingPanel, gbc);
 
-  //  The actionPerformed() method is called when 
-  //  the "Start" button is pressed. 
-  public void actionPerformed(ActionEvent event) {
-    
-    //  Get the initial quantities from the textfields.
-    ballVx = Double.parseDouble(vxTextField.getText());
-    ballVz = Double.parseDouble(vzTextField.getText());
+		eastPanel.add(drawingPanel);
 
-    //  Update the display
-    updateDisplay();
+		// Add the JPanel objects to the content pane
+		getContentPane().setLayout(new BorderLayout());
+		getContentPane().add(northPanel, BorderLayout.NORTH);
+		getContentPane().add(eastPanel, BorderLayout.EAST);
+		getContentPane().add(westPanel, BorderLayout.WEST);
 
-    //  Start the box sliding using a Timer object
-    //  to slow down the action.
-    gameTimer.start();
-  }
+		// Add a title to the JFrame, size it, and make it visible.
+		setTitle("Prueba Paddle Game");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 500, 350);
+		setVisible(true);
 
-  //  The stateChanged() method is called when 
-  //  the the JSlider position is changed. 
-  public void stateChanged(ChangeEvent event) {
-    
-    //  Set new paddle location based on position of JSlider.
-    paddleZ = paddleSlider.getValue();
+		// Update the GUI display
+		updateDisplay();
+	}
 
-    //  Update the display
-    updateDisplay();
-  }
+	// The actionPerformed() method is called when
+	// the "Start" button is pressed.
+	public void actionPerformed(ActionEvent event) {
 
-  //  This method redraws the GUI display.
-  private void updateDisplay() {
-    Graphics g = drawingPanel.getGraphics();
-    int width = drawingPanel.getWidth() - 1;
-    int height = drawingPanel.getHeight() - 1;
+		// Get the initial quantities from the textfields.
+		b.getVelocity().setX(Double.parseDouble(vxTextField.getText()));
+		b.getVelocity().setY(Double.parseDouble(vzTextField.getText()));
 
-    g.clearRect(0, 0, width, height);
-    g.setColor(Color.WHITE);
-    g.fillRect(0, 0, width, height); 
+		// Update the display
+		updateDisplay();
 
-    //  Draw outline of game area.
-    g.setColor(Color.BLACK);
-    g.drawLine(0, 0, width, 0);
-    g.drawLine(width, 0, width, height);
-    g.drawLine(width, height, 0, height);
+		// Start the box sliding using a Timer object
+		// to slow down the action.
+		gameTimer.start();
+	}
 
-    //  Update the position of the ball on the screen.
-    int xPosition = (int)(ballX - ballRadius);
-    int zPosition = (int)(height - ballRadius - ballZ);
-    g.fillOval(xPosition, zPosition, 2*(int)(ballRadius), 
-               2*(int)(ballRadius));
+	// The stateChanged() method is called when
+	// the the JSlider position is changed.
+	public void stateChanged(ChangeEvent event) {
 
-    //  Update the position of the paddle on the screen.
-    zPosition = (int)(height - paddleZ);
-    g.fillRect(10, zPosition - paddleHeight/2, 10, paddleHeight);
-  }
+		// Set new paddle location based on position of JSlider.
+		paddle.getPosition().setY(paddleSlider.getValue());
 
-  public static void main(String args[]) {
-    PaddleGame gui = new PaddleGame();
-  }
+		// Update the display
+		updateDisplay();
+	}
 
-  //  This ActionListener is called by the Timer
-  class GameUpdater implements ActionListener {
-    public void actionPerformed(ActionEvent event) {
+	private void updateDisplay() {
+		Graphics g = drawingPanel.getGraphics();
+		int width = drawingPanel.getWidth() - 1;
+		int height = drawingPanel.getHeight() - 1;
 
-      //  Get dimensions of drawing area.
-      Graphics g = drawingPanel.getGraphics();
-      int width = drawingPanel.getWidth() - 1;
-      int height = drawingPanel.getHeight() - 1;
+		g.clearRect(0, 0, width, height);
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, width, height);
 
-      //  Determine if ball collides with right wall.
-      //  If it does, change the x-velocity of the ball.
-      if ( ballVx > 0.0 && ballX + ballRadius >= width ) {
-        ballVx = -ballVx;
-      }
+		// Draw outline of game area.
+		g.setColor(Color.BLACK);
+		g.drawLine(0, 0, width, 0);
+		g.drawLine(width, 0, width, height);
+		g.drawLine(width, height, 0, height);
 
-      //  Determine if ball collides with the top wall.
-      //  If it does, change the z-velocity of the ball.
-      if ( ballVz > 0.0 && ballZ + ballRadius >= height ) {
-        ballVz = -ballVz;
-      }
+		// Update the position of the ball on the screen.
+		int xPosition = (int) (b.getPosition().getX() - b.radius);
+		int zPosition = (int) (height - b.radius - b.getPosition().getY());
+		g.fillOval(xPosition, zPosition, 2 * (int) (b.radius), 2 * (int) (b.radius));
 
-      //  Determine if ball collides with the bottom wall.
-      //  If it does, change the z-velocity of the ball.
-      if ( ballVz < 0.0 && ballZ - ballRadius <= 0.0 ) {
-        ballVz = -ballVz;
-      }
+		// Update the position of the paddle on the screen.
+		zPosition = (int) (height - paddle.getPosition().getY());
+		g.fillRect(10, (int) ((int) zPosition - paddle.height / 2), 10, (int) paddle.height);
+	}
 
-      //  Determine if ball collides with paddle.
-      //  If it does, change the x-velocity of the ball.
-      if ( ballVx < 0.0 && ballX - ballRadius <= 20.0 ) {
-        if ( ballZ - ballRadius >= paddleZ - paddleHeight/2 &&
-             ballZ + ballRadius <= paddleZ + paddleHeight/2 ) {
-          ballVx = -ballVx;
-        }
-      }
+	class GameUpdater implements ActionListener {
 
-      //  If ball travels off the left edge of the game
-      //  area, stop the simulation.
-      if ( ballX <= 0.0 ) {
-        gameTimer.stop();
-      }
+		Body b, paddle;
+		public double timeIncrement = 0.07;
 
-      //  Compute the new location of the ball. 
-      double timeIncrement = 0.07;
-      ballX = ballX + timeIncrement*ballVx;
-      ballZ = ballZ + timeIncrement*ballVz;
+		GameUpdater(Body body, Body paddle) {
+			this.b = body;
+			this.paddle = paddle;
+		}
 
-      //  Update the display
-      updateDisplay();
+		public void actionPerformed(ActionEvent event) {
 
-    }
-  }
+			// Get dimensions of drawing area.
+			Graphics g = drawingPanel.getGraphics();
+			int width = drawingPanel.getWidth() - 1;
+			int height = drawingPanel.getHeight() - 1;
+
+			Boundary limit = new Boundary(height, 0, width, 0);
+
+			// Determine if ball collides with the top wall.
+			// If it does, change the Y-velocity of the ball.
+			if (Contact.testBoundaryOverlap(b, limit, Contact.top)) {
+				Contact.elasticCollisionHandler(b,coefficient, Contact.Y);
+//				b.getVelocity().setY(-(b.getVelocity().getY()));
+			}
+
+			// Determine if ball collides with right wall.
+			// If it does, change the x-velocity of the ball.
+			if (Contact.testBoundaryOverlap(b, limit, Contact.right)) {
+				Contact.elasticCollisionHandler(b,coefficient, Contact.X);
+//				b.getVelocity().setX(-(b.getVelocity().getX()));
+			}
+
+			// Determine if ball collides with the bottom wall.
+			// If it does, change the Y-velocity of the ball.
+			if (Contact.testBoundaryOverlap(b, limit, Contact.bottom)) {
+				Contact.elasticCollisionHandler(b,coefficient, Contact.Y);
+//				b.getVelocity().setY(-(b.getVelocity().getY()));
+			}
+
+			// Determine if ball collides with paddle.
+			// If it does, change the x-velocity of the ball.
+
+			if (b.getVelocity().getX() < 0.0 && b.getPosition().getX() - b.radius <= 20.0) {
+				if (b.getPosition().getY() - b.radius >= paddle.getPosition().getY() - paddle.height / 2
+						&& b.getPosition().getY() + b.radius <= paddle.getPosition().getY() + paddle.height / 2) {
+					b.getVelocity().setX(-(b.getVelocity().getX()));
+				}
+			}
+
+			// If ball travels off the left edge of the game
+			// area, stop the simulation.
+			if (Contact.testBoundaryOverlap(b, limit, Contact.left)) {
+				gameTimer.stop();
+			}
+
+			// Compute the new location of the ball.
+
+			b.updateConstAcc(timeIncrement);
+
+			// Update the display
+			updateDisplay();
+
+		}
+	}// Fin de la clase gameupdater
+
+	public static void main(String args[]) {
+		RadPaddle gui = new RadPaddle();
+	}
+
 }
