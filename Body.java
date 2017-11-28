@@ -2,17 +2,21 @@ package com.rad.vf;
 
 public class Body extends Particle {
 
-	public double radius, height, mass, coefficientOfRestitution;
-	
-	public Body(double mass, double radius, double coefficient){
-		this(null, null, null, null, 0, mass);
-		this.mass = mass;
-		this.radius = radius;
-		this.coefficientOfRestitution = coefficient;
+	public double radius, length, height, coefficientOfRestitution;
+
+	public Body() {
+		super(null, null, null, null, 0, 1);
 	}
-	
+
 	public Body(Vec2D position, Vec2D velocity, Vec2D accel, Vec2D force, double damp, double mass) {
 		super(position, velocity, accel, force, damp, mass);
+	}
+	
+	public Body(double radius,double height, double length, double mass) {
+		super(null, null, null, null, 0, mass);
+		this.radius=radius;
+		this.height=height;
+		this.length=length;
 	}
 
 	public double getRadius() {
@@ -23,8 +27,8 @@ public class Body extends Particle {
 		return height;
 	}
 
-	public double getMass() {
-		return mass;
+	public double getLength() {
+		return length;
 	}
 
 	public double getCoefficientOfRestitution() {
@@ -35,16 +39,17 @@ public class Body extends Particle {
 		this.radius = radius;
 	}
 
-	public void setHeight(double height) {
-		this.height = height;
+	public void setLength(double length) {
+		this.length = length;
 	}
 
-	public void setMass(double mass) {
-		this.mass = mass;
+	public void setHeight(double height) {
+		this.height = height;
 	}
 
 	public void setCoefficientOfRestitution(double coefficientOfRestitution) {
 		this.coefficientOfRestitution = coefficientOfRestitution;
 	}
 	
+
 }
