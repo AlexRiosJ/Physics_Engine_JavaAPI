@@ -1,112 +1,115 @@
+
 package com.rad.vf;
 
 public class Particle {
-	protected Vec2D position, velocity, acceleration, forceAccum, torque;
-	protected double damping, mass; // Amortiguación
-
+	private Vec2D position, velocity, acceleration, forceAccum, torque;
+	private double damping, inverseMass; // AmortiguaciÃ³n
+	
 	// CONTROL DE EXCEPCION PORQUE LA MASA NO PUEDE SER 0.
-
-	public Particle(Vec2D position, Vec2D velocity, Vec2D acceleration, Vec2D totalForce, double damp, double mass) {
-		this.position = position;
-		this.velocity = velocity;
+	
+	Particle(Vec2D position, Vec2D velocity, Vec2D acceleration, Vec2D forceAcumm, double damping, double mass){
+		this.position     = position;
+		this.velocity     = velocity;
 		this.acceleration = acceleration;
-		this.forceAccum = totalForce;
-		this.damping = damp;
-		this.mass =  mass;
+		this.forceAccum   = forceAcumm;
+		this.damping      = damping;
+		this.inverseMass  = 1.0 / mass;
 	}
-
-	public void updateConstSpeed(double time) {
+	
+	public void integrate(double time) {
 		// Update linear position.
 		position.addScaledVector(velocity, time);
-
-	}
-
-	public void updateConstAcc(double time) {
-		position.addScaledVector(velocity, time);
-		// Update linear velocity from the acceleration.
-		velocity.addScaledVector(acceleration, time);
-
-		// Work out the acceleration from the force.
 		/*
-		 * acceleration.addScaledVector(forceAccum,inverseMass); // Impose drag.
-		 * velocity.multiply(Math.pow(damping, time));
-		 */
+			position.addScaledVector(acceleration, time*time*0.5);
+			// Work out the acceleration from the force.
+			acceleration.addScaledVector(forceAccum,inverseMass);
+			// Update linear velocity from the acceleration.
+			velocity.addScaledVector(acceleration, time);
+			// Impose drag.
+			velocity.multiply(Math.pow(damping, time));
+		*/
 	}
-
-	public void updateWithForces(double time, Vec2D... Forces) {
-
-	}
-
 	
 	public Vec2D getPosition() {
 		return position;
 	}
 
+
 	public Vec2D getVelocity() {
 		return velocity;
 	}
+
 
 	public Vec2D getAcceleration() {
 		return acceleration;
 	}
 
+
 	public Vec2D getForceAccum() {
 		return forceAccum;
 	}
+
 
 	public Vec2D getTorque() {
 		return torque;
 	}
 
+
 	public double getDamping() {
 		return damping;
 	}
 
-	public double getMass() {
-		return mass;
+
+	public double getInverseMass() {
+		return inverseMass;
 	}
+
 
 	public void setPosition(Vec2D position) {
 		this.position = position;
 	}
 
+
 	public void setVelocity(Vec2D velocity) {
 		this.velocity = velocity;
 	}
+
 
 	public void setAcceleration(Vec2D acceleration) {
 		this.acceleration = acceleration;
 	}
 
+
 	public void setForceAccum(Vec2D forceAccum) {
 		this.forceAccum = forceAccum;
 	}
+
 
 	public void setTorque(Vec2D torque) {
 		this.torque = torque;
 	}
 
+
 	public void setDamping(double damping) {
 		this.damping = damping;
 	}
 
-	public void setMass(double mass) {
-		this.mass = mass;
+
+	public void setInverseMass(double inverseMass) {
+		this.inverseMass = inverseMass;
 	}
+
 
 	public void addForce(Vec2D force) {
 		this.forceAccum.setX(this.forceAccum.getX() + force.getX());
 		this.forceAccum.setY(this.forceAccum.getY() + force.getY());
-		// torque
+		//torque
 	}
-
+	
 	public void clearAcc() {
 		this.forceAccum.setX(0);
 		this.forceAccum.setY(0);
+		//can i do this?
 	}
-
-	public String toString() {
-		return this.position.toString();
-	}
-
+	
 }

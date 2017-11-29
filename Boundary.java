@@ -8,11 +8,4 @@ public class Boundary {
 		this.right=right;
 		this.bottom=bottom;
 	}
-	
-	public boolean outOfBounds(Body b) {
-		double x=b.position.getX(),y=b.position.getY();
-		if(x<left || x>right || y<bottom || y>top) return true;
-		return false;
-	}
-	
 }

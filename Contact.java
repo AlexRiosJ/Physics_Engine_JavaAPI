@@ -16,20 +16,16 @@ public class Contact {
 	}
 
 	public static boolean testBodiesOverlap(Body b1, Body b2) {
-		double distance=Vec2D.distanceFromSquared(b1.getPosition(), b2.getPosition());
-		System.out.println(distance);
-		if(distance<Math.pow(b1.radius+b2.radius,2)) {
-			return true;
-		}
+
 		return false;
 	}
 
 	/**
-	 * testBoundaryOverlap recibe el cuerpo a comparar, así como el espacio
-	 * delimitador de la simulación. También recibe un numero que indica el
+	 * testBoundaryOverlap recibe el cuerpo a comparar, asÃ­ como el espacio
+	 * delimitador de la simulaciÃ³n. TambiÃ©n recibe un numero que indica el
 	 * cuadrante a analizar. La equivalencia es: 1- Analiza overlap con el limite
-	 * superior en Y. 2- Analiza overlap con el límite izquierdo en X. 3- Analiza
-	 * overlap con el límite derecho en X. 4- Analiza overlap con el límite inferior
+	 * superior en Y. 2- Analiza overlap con el lÃ­mite izquierdo en X. 3- Analiza
+	 * overlap con el lÃ­mite derecho en X. 4- Analiza overlap con el lÃ­mite inferior
 	 * en Y.
 	 */
 	public static boolean testBoundaryOverlap(Body b, Boundary limit, int quadrant) {
@@ -37,34 +33,22 @@ public class Contact {
 		switch (quadrant) {
 		case top:
 			vertexDifference = limit.top - (b.getPosition().getY() + b.height);
-			if (vertexDifference <= 0.0) {
-				b.getPosition().setY(limit.top);
-				return true;
-			}
 			break;
 		case left:
 			vertexDifference = (b.getPosition().getX() - b.length) - limit.left;
-			if (vertexDifference <= 0.0) {
-				b.getPosition().setX(limit.left);
-				return true;
-			}
 			break;
 		case right:
 			vertexDifference = limit.right - (b.getPosition().getX() + b.length);
-			if (vertexDifference <= 0.0) {
-				b.getPosition().setX(limit.right);
-				return true;
-			}
 			break;
 		case bottom:
 			vertexDifference = (b.getPosition().getY() - b.height) - limit.bottom;
-			if (vertexDifference <= 0.0) {
-				b.getPosition().setY(limit.bottom);
-				return true;
-			}
 			break;
 		}
-		
+
+		System.out.println("Diff. " + vertexDifference);
+
+		if (vertexDifference <= 0.0)
+			return true;
 		return false;
 	}
 
@@ -77,13 +61,10 @@ public class Contact {
 	 * @return none, but modifies velocity vector.
 	 * */
 	public static void elasticCollisionHandler(Body b,double coefficientE, int axis) {
-		if (axis == Y) {
+		if (axis == Y)
 			b.getVelocity().setY(b.getVelocity().getY() * -coefficientE);
-		}
-		else {
+		else
 			b.getVelocity().setX(b.getVelocity().getX() * -coefficientE);
-		
-		}
 	}
 	
 	
@@ -92,40 +73,17 @@ public class Contact {
 	 * @return none, but modifies velocity vector from both bodies.
 	 * */
 	public static void elasticCollisionHandler(Body a, Body b) {
-				
-		Vec2D va=a.getVelocity().clone(),
-			vb=b.getVelocity().clone();
-		double e=a.coefficientOfRestitution;
-		
-		System.out.println("IMPACTO\n"+ va);
-		
-		double v1x=(e*(va.getX()-vb.getX())-va.getX()-vb.getX())/-2.0;
-		double v1y=(e*(va.getY()-vb.getY())-va.getY()-vb.getY())/-2.0;
-		a.setVelocity(new Vec2D(v1x,v1y));
-		
-		System.out.println("VELOCIDAD LUEGO DEL IMPACTO\n"+ a.getVelocity());
-		
-		double v2x=(e*(va.getX()-vb.getX())+va.getX()+vb.getX())/2.0;
-		double v2y=(e*(va.getY()-vb.getY())+va.getY()+vb.getY())/2.0;
-		b.setVelocity(new Vec2D(v2x,v2y));
-		
-		//Actualiza las posiciones para prevenir que se queden pegados
-		a.updateConstAcc(.6);
-		b.updateConstAcc(.6);
-		
-		/* IMPACTO NEWTONIANO CON TRANSMISIÓN DE TODA LA ENERGÍA
-		//Calculate a's velocity after impact		
-		Vec2D v1a= Vec2D.multiply(va, (a.mass-b.mass)/(a.mass+b.mass));
-		Vec2D v2a= Vec2D.multiply(vb, (2*b.mass)/(a.mass+b.mass));
+		//Calculate a's velocity after impact
+		Vec2D v1a= Vec2D.multiply(a.getVelocity(), (a.mass-b.mass)/(a.mass+b.mass));
+		Vec2D v2a= Vec2D.multiply(b.getVelocity(), (2*b.mass)/(a.mass+b.mass));
 		a.getVelocity().setX(v1a.getX()+v2a.getX());
 		a.getVelocity().setY(v1a.getY()+v2a.getY());
 		
 		//Calculate b's velocity after impact
-		Vec2D v1b= Vec2D.multiply(va, (2*a.mass)/(a.mass+b.mass));
-		Vec2D v2b= Vec2D.multiply(vb, (a.mass-b.mass)/(a.mass+b.mass));
+		Vec2D v1b= Vec2D.multiply(a.getVelocity(), (2*a.mass)/(a.mass+b.mass));
+		Vec2D v2b= Vec2D.multiply(b.getVelocity(), (a.mass-b.mass)/(a.mass+b.mass));
 		b.getVelocity().setX(v1b.getX()-v2b.getX());
 		b.getVelocity().setY(v1b.getY()-v2b.getY());
-		*/
 	}
 	
 	
