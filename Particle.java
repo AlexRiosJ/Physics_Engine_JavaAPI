@@ -1,8 +1,9 @@
-package com.rad.vf;
+
+package com.rad.classes;
 
 public class Particle {
-	protected Vec2D position, velocity, acceleration, forceAccum, torque;
-	protected double damping, mass; // Amortiguación
+	private Vec2D position, velocity, acceleration, forceAccum, torque;
+	private double damping, mass; // AmortiguaciÃ³n
 
 	// CONTROL DE EXCEPCION PORQUE LA MASA NO PUEDE SER 0.
 
@@ -12,13 +13,12 @@ public class Particle {
 		this.acceleration = acceleration;
 		this.forceAccum = totalForce;
 		this.damping = damp;
-		this.mass =  mass;
+		this.mass = mass;
 	}
 
 	public void updateConstSpeed(double time) {
 		// Update linear position.
 		position.addScaledVector(velocity, time);
-
 	}
 
 	public void updateConstAcc(double time) {
@@ -33,11 +33,6 @@ public class Particle {
 		 */
 	}
 
-	public void updateWithForces(double time, Vec2D... Forces) {
-
-	}
-
-	
 	public Vec2D getPosition() {
 		return position;
 	}

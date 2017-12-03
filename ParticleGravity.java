@@ -1,4 +1,4 @@
-package com.rad.vf;
+package com.rad.classes;
 
 public class ParticleGravity implements ParticleForceGenerator {
 	public final Vec2D gravity;
