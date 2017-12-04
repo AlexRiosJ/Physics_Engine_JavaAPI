@@ -7,7 +7,7 @@ import java.lang.Math;
  * vectors. Vectors are the basis of all the geometry related operations in the
  * engine. A Vector object is of the form { x: 0, y: 0 }.
  * 
- * @author Alfredo Rodríguez, Alejandro Ríos, Darío Arias
+ * @author Alejandro Ríos, Darío Arias, Alfredo Rodriguez
  */
 public class Vec2D {
 	private double x, y;
@@ -16,8 +16,8 @@ public class Vec2D {
 	/**
 	 * Constructor which initialize a vector whit values x, y.
 	 * 
-	 * @param double
-	 *            x component, y component
+	 * @param x component of the vector
+	 * @param y component of the vector
 	 * @return Vec2D a new Vec2D
 	 */
 	public Vec2D(double x, double y) {
@@ -27,7 +27,6 @@ public class Vec2D {
 
 	/**
 	 * An empty constructor which initialize whit zero values.
-	 * 
 	 * @return Vec2D a new Vec2D
 	 */
 	public Vec2D() {
@@ -39,7 +38,7 @@ public class Vec2D {
 	/**
 	 * Set the x component of the vector.
 	 * 
-	 * @param x
+	 * @param x component of the vector
 	 * @return No return but modifies the x component value of the vector
 	 */
 	public void setX(double x) {
@@ -49,7 +48,7 @@ public class Vec2D {
 	/**
 	 * Set the y component of the vector.
 	 * 
-	 * @param y
+	 * @param y component of the vector
 	 * @return No return but modifies the y component value of the vector
 	 */
 	public void setY(double y) {
@@ -75,8 +74,8 @@ public class Vec2D {
 	// Class methods
 	/**
 	 * Adds the two vectors.
-	 * @param vectorA
-	 * @param vectorB
+	 * @param vectorA the vector A to be added
+	 * @param vectorB the vector B to be added
 	 * @return A new vector of vectorA and vectorB added
 	 */
 	public static Vec2D sum(Vec2D vectorA, Vec2D vectorB) {
@@ -85,8 +84,8 @@ public class Vec2D {
 
 	/**
 	 * Subtracts  the two vectors.
-	 * @param vectorA
-	 * @param vectorB
+	 * @param vectorA the vector A to be subtracted
+	 * @param vectorB the vector B to be subtracted
 	 * @return A new vector of vectorA and vectorB subtracted
 	 */
 	public static Vec2D substract(Vec2D vectorA, Vec2D vectorB) {
@@ -95,8 +94,8 @@ public class Vec2D {
 
 	/**
 	 * Multiplies a vector and a scalar.
-	 * @param vector
-	 * @param scalar
+	 * @param vector the vector that will be multiplied by the scalar
+	 * @param scalar the scalar that will multiply each component of the vector
 	 * @return A new vector multiplied by scalar
 	 */
 	public static Vec2D multiply(Vec2D vector, double scalar) {
@@ -124,33 +123,29 @@ public class Vec2D {
 	}
 
 	/**
-	 * Returns the magnitude of the distance bet
+	 * Returns the magnitude of the distance between the vectors.
 	 * @param vectorA
 	 * @param vectorB
-	 * @return
+	 * @return The magnitude of the distance between the vectors
 	 */
 	public static double distanceFrom(Vec2D vectorA, Vec2D vectorB) {
 		return Math.sqrt(Math.pow(vectorA.getX() - vectorB.getX(), 2) + Math.pow(vectorA.getY() - vectorB.getY(), 2));
 	}
 
 	/**
-	 * Retorna un número real con la distancia entre dos vectores al cuadrado.
-	 * Ahorra tiempo de ejecución.
-	 * 
-	 * @param Vec2D
-	 *            vector1, Vec2D vector2
-	 * @return double distancia cuadrada
+	 * Returns the magnitude squared of the distance between the vectors.
+	 * @param vectorA
+	 * @param vectorB
+	 * @return The magnitude squared of the distance between the vectors
 	 */
 	public static double distanceFromSquared(Vec2D vectorA, Vec2D vectorB) {
 		return Math.pow(vectorA.getX() - vectorB.getX(), 2) + Math.pow(vectorA.getY() - vectorB.getY(), 2);
 	}
 
 	/**
-	 * Retorna un vector normalizado.
-	 * 
-	 * @param Vec2D
-	 *            vector a normalizar
-	 * @return Vec2D vector normalizado
+	 * Returns the vector normalized.
+	 * @param vector the vector to be normalized
+	 * @return A new Vec2D normalized from the vector in the argument.
 	 */
 	public static Vec2D getNormalized(Vec2D vector) {
 		double x = vector.getX(), y = vector.getY();
@@ -158,71 +153,57 @@ public class Vec2D {
 		return new Vec2D(normX, normY);
 	}
 
-	// Métodos de objeto
+	// Object methods
 
 	/**
-	 * Retorna si un vector es igual al actual.
-	 * 
-	 * @param Vec2D
-	 *            another,
-	 * @return boolean true o false
+	 * Returns a boolean value depending if equals or not the vector in the argument.
+	 * @param vector the vector to be compared
+	 * @return true or false depending if equals or not the vector in the argument
 	 */
-	public boolean equals(Vec2D another) {
-		return x == another.getX() && y == another.getY();
+	@Override
+	public boolean equals(Object o) {
+		if(!(o instanceof Vec2D)) return false;
+		Vec2D vector = (Vec2D) o;
+		return x == vector.getX() && y == vector.getY();
 	}
 
 	/**
-	 * Actualiza el vector con los valores de la suma de los elementos x,y de un
-	 * vector B.
-	 * 
-	 * @param Vec2D
-	 *            vectorB
-	 * @return nada porque los cambios son internos
+	 * Updates the current vector adding the values of each component from the vector in the argument.
+	 * @param vector the vector to be added to each component
 	 */
-	public void sum(Vec2D vectorB) {
-		this.x += vectorB.getX();
-		this.y += vectorB.getY();
+	public void sum(Vec2D vector) {
+		this.x += vector.getX();
+		this.y += vector.getY();
 	}
 
 	/**
-	 * Actualiza el vector con los valores de la resta de los elementos x,y de un
-	 * vector B.
-	 * 
-	 * @param Vec2D
-	 *            vectorB
-	 * @return nada porque los cambios son internos
+	 * Updates the current vector subtracting the values of each component from the vector in the argument.
+	 * @param vector the vector to be subtracted to each component
 	 */
-	public void substract(Vec2D vectorB) {
-		this.x -= vectorB.getX();
-		this.y -= vectorB.getY();
+	public void substract(Vec2D vector) {
+		this.x -= vector.getX();
+		this.y -= vector.getY();
 	}
 
 	/**
-	 * Retorna la magnitud del vector actual.
-	 * 
-	 * @return double magnitud
+	 * Returns the magnitude (length) of a vector.
+	 * @return The magnitude of the vector
 	 */
 	public double getMagnitude() {
 		return Math.sqrt(x * x + y * y);
 	}
 
 	/**
-	 * Retorna la magnitud cuadrada del vector actual, ahorrando tiempo de
-	 * ejecución.
-	 * 
-	 * @return double magnitud cuadrada
+	 * Returns the magnitude (length) of a vector (therefore saving a sqrt operation).
+	 * @return The squared magnitude of the vector
 	 */
 	public double getSquaredMagnitude() {
 		return (x * x) + (y * y);
 	}
 
 	/**
-	 * Actualiza el vector con los valores de la multiplicación de los elementos x,y
-	 * por un escalar.
-	 * 
-	 * @param double
-	 *            scalar
-	 * @return nada porque los cambios son internos
+	 * Multiply the vector with the scalar from the argument.
+	 * @param scalar the value of the scalar
 	 */
 	public void multiply(double scalar) {
 		this.x *= scalar;
@@ -230,12 +211,9 @@ public class Vec2D {
 	}
 
 	/**
-	 * Actualiza el vector con los valores de la suma de los elementos x,y de un
-	 * vector B, los cuales fueron multiplicados por un escalar.
-	 * 
-	 * @param Vec2D
-	 *            vector, double scale
-	 * @return nada porque los cambios son internos
+	 * Add a scaled vector to each component from the vector
+	 * @param vector the vector to be scaled
+	 * @param scale the value of the scalar
 	 */
 	public void addScaledVector(Vec2D vector, double scale) {
 		this.x += vector.getX() * scale;
@@ -243,20 +221,20 @@ public class Vec2D {
 	}
 
 	/**
-	 * Retorna un vector con los mismos valores que el actual.
-	 * 
-	 * @return Vec2D vector clonado
+	 * Returns a new vector with the same values of the current vector.
+	 * @return Vec2D the copy of the vector
 	 */
+	@Override
 	public Vec2D clone() {
 		Vec2D clone = new Vec2D(x, y);
 		return clone;
 	}
 
 	/**
-	 * Retorna una cadena con la posición en formato <x,y> del vector.
-	 * 
-	 * @return String con las componentes del vector
+	 * Returns a String in the format { x: a, y: b } of the current vector values.
+	 * @return String the string of the vector values { x: a, y: b }
 	 */
+	@Override
 	public String toString() {
 		return String.format("{ x: %.2f, y: %.2f }", x, y);
 	}
