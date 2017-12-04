@@ -374,10 +374,10 @@ public class Enviroment extends JFrame implements ActionListener, ChangeListener
 		// Update the GUI display
 		// drawDisplay();
 		updateDisplay();
-	} // Fin del constructor
+	}
 
-	@Override
 	// stateChanged() is called when the slider is moved.
+	@Override
 	public void stateChanged(ChangeEvent e) {
 		if(isPlaying) {
 			updater.setTimeIncrement((double) 0.01 * timeSlider.getValue());
@@ -414,7 +414,7 @@ public class Enviroment extends JFrame implements ActionListener, ChangeListener
 		updater.setTimeIncrement((double) 0.01 * timeSlider.getValue());
 		isPlaying = true;
 		timer.start();
-	}
+	} // End of the constructor
 
 	BufferedImage image = null;
 	
@@ -514,14 +514,14 @@ public class Enviroment extends JFrame implements ActionListener, ChangeListener
 
 		public void actionPerformed(ActionEvent event) {
 
-			// Get dimensions of drawing area.
+			// Get dimensions of drawing area
 			int width  = drawingPanel.getWidth();
 			int height = drawingPanel.getHeight();
 
 			Boundary boundary = Boundary.getInstance(height, 0, width, 0);
 
-			// Boundary test para ball1
 			try {
+				// ball1 Boundary test
 				if (Contact.testBoundaryOverlap(ball1, boundary, Contact.BOTTOM)
 						|| Contact.testBoundaryOverlap(ball1, boundary, Contact.TOP))
 					Contact.collisionHandler(ball1, COEFFICIENT_E, Contact.Y);
@@ -529,7 +529,7 @@ public class Enviroment extends JFrame implements ActionListener, ChangeListener
 						|| Contact.testBoundaryOverlap(ball1, boundary, Contact.RIGHT))
 					Contact.collisionHandler(ball1, COEFFICIENT_E, Contact.X);
 	
-				// Boundary test para ball2
+				// ball2 Boundary test
 				if (Contact.testBoundaryOverlap(ball2, boundary, Contact.BOTTOM)
 						|| Contact.testBoundaryOverlap(ball2, boundary, Contact.TOP))
 					Contact.collisionHandler(ball2, COEFFICIENT_E, Contact.Y);
@@ -545,14 +545,12 @@ public class Enviroment extends JFrame implements ActionListener, ChangeListener
 				isStoped = true;
 				JOptionPane.showMessageDialog(null, e.getMessage(), e.toString(), JOptionPane.ERROR_MESSAGE);
 			}
-			
 
 			ball1.updateConstAcc(timeIncrement);
 			ball2.updateConstAcc(timeIncrement);
 			updateDisplay();
-
 		}
 
-	}// Fin de la clase Updater
+	} // End of class Updater
 
 }
