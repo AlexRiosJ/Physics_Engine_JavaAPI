@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -362,8 +363,7 @@ public class Enviroment extends JFrame implements ActionListener, ChangeListener
 		getContentPane().add(eastPanel, BorderLayout.EAST);
 		getContentPane().add(westPanel, BorderLayout.WEST);
 
-		image = new BufferedImage(drawingPanel.getPreferredSize().width, drawingPanel.getPreferredSize().height,
-				BufferedImage.TYPE_INT_RGB);
+		image = new BufferedImage(drawingPanel.getPreferredSize().width, drawingPanel.getPreferredSize().height, BufferedImage.TYPE_INT_RGB);
 
 		// Add a title to the JFrame, size it, and make it visible.
 		setTitle("Enviroment");
@@ -387,43 +387,39 @@ public class Enviroment extends JFrame implements ActionListener, ChangeListener
 
 	// The actionPerformed() method is called when
 	// the "Start" button is pressed.
-	public void actionPerformed(ActionEvent event) throws NegativeMassException {
+	public void actionPerformed(ActionEvent event) {
 		// Get the initial quantities from the textfields.
-		ball1.getPosition().setX(Double.parseDouble(sx1TextField.getText()));
-		ball1.getPosition().setY(Double.parseDouble(sy1TextField.getText()));
-		ball1.getVelocity().setX(Double.parseDouble(vx1TextField.getText()));
-		ball1.getVelocity().setY(Double.parseDouble(vy1TextField.getText()));
-		if(Double.parseDouble(mass1TextField.getText()) <= 0)
-			throw new NegativeMassException(Double.parseDouble(mass1TextField.getText()));
-		else ball1.setMass(Double.parseDouble(mass1TextField.getText()));
-		ball1.setRadius(Double.parseDouble(radius1TextField.getText()));
-		ball2.getPosition().setX(Double.parseDouble(sx2TextField.getText()));
-		ball2.getPosition().setY(Double.parseDouble(sy2TextField.getText()));
-		ball2.getVelocity().setX(Double.parseDouble(vx2TextField.getText()));
-		ball2.getVelocity().setY(Double.parseDouble(vy2TextField.getText()));
-		if(Double.parseDouble(mass2TextField.getText()) <= 0) 
-			throw new NegativeMassException(Double.parseDouble(mass2TextField.getText()));
-		else ball2.setMass(Double.parseDouble(mass2TextField.getText()));
-		ball2.setRadius(Double.parseDouble(radius2TextField.getText()));
-		gravity.setX(Double.parseDouble(xGravityTextField.getText()));
-		gravity.setY(Double.parseDouble(yGravityTextField.getText()));
-		if(Double.parseDouble(eTextField.getText()) < 0 || Double.parseDouble(eTextField.getText()) > 1)
-			throw new InvalidCoefficientOfRestitutionException(Double.parseDouble(eTextField.getText()));
-		else COEFFICIENT_E = Double.parseDouble(eTextField.getText());
+		try {
+			ball1.getPosition().setX(Double.parseDouble(sx1TextField.getText()));
+			ball1.getPosition().setY(Double.parseDouble(sy1TextField.getText()));
+			ball1.getVelocity().setX(Double.parseDouble(vx1TextField.getText()));
+			ball1.getVelocity().setY(Double.parseDouble(vy1TextField.getText()));
+			ball1.setMass(Double.parseDouble(mass1TextField.getText()));
+			ball1.setRadius(Double.parseDouble(radius1TextField.getText()));
+			ball2.getPosition().setX(Double.parseDouble(sx2TextField.getText()));
+			ball2.getPosition().setY(Double.parseDouble(sy2TextField.getText()));
+			ball2.getVelocity().setX(Double.parseDouble(vx2TextField.getText()));
+			ball2.getVelocity().setY(Double.parseDouble(vy2TextField.getText()));
+			ball2.setMass(Double.parseDouble(mass2TextField.getText()));
+			ball2.setRadius(Double.parseDouble(radius2TextField.getText()));
+			gravity.setX(Double.parseDouble(xGravityTextField.getText()));
+			gravity.setY(Double.parseDouble(yGravityTextField.getText()));
+			COEFFICIENT_E = Double.parseDouble(eTextField.getText());
+		} catch(NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, "Wrong input values!", "Error", JOptionPane.ERROR_MESSAGE);
+		} catch(NegativeMassException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), e.toString(), JOptionPane.ERROR_MESSAGE);
+		}
 		isStoped = false;
 		updater.setTimeIncrement((double) 0.01 * timeSlider.getValue());
 		isPlaying = true;
-		// Start the box sliding using a Timer object
-		// to slow down the action.
 		timer.start();
-		
 	}
 
 	BufferedImage image = null;
 	
 	private void updateDisplay() {
 
-		// Graphics g = drawingPanel.getGraphics();
 		Graphics2D g = (Graphics2D) image.getGraphics();
 		int width = drawingPanel.getWidth();
 		int height = drawingPanel.getHeight();
@@ -522,27 +518,34 @@ public class Enviroment extends JFrame implements ActionListener, ChangeListener
 			int width  = drawingPanel.getWidth();
 			int height = drawingPanel.getHeight();
 
-			Boundary boundary = new Boundary(height, 0, width, 0);
+			Boundary boundary = Boundary.getInstance(height, 0, width, 0);
 
 			// Boundary test para ball1
-			if (Contact.testBoundaryOverlap(ball1, boundary, Contact.BOTTOM)
-					|| Contact.testBoundaryOverlap(ball1, boundary, Contact.TOP))
-				Contact.collisionHandler(ball1, COEFFICIENT_E, Contact.Y);
-			if (Contact.testBoundaryOverlap(ball1, boundary, Contact.LEFT)
-					|| Contact.testBoundaryOverlap(ball1, boundary, Contact.RIGHT))
-				Contact.collisionHandler(ball1, COEFFICIENT_E, Contact.X);
-
-			// Boundary test para ball2
-			if (Contact.testBoundaryOverlap(ball2, boundary, Contact.BOTTOM)
-					|| Contact.testBoundaryOverlap(ball2, boundary, Contact.TOP))
-				Contact.collisionHandler(ball2, COEFFICIENT_E, Contact.Y);
-			if (Contact.testBoundaryOverlap(ball2, boundary, Contact.LEFT)
-					|| Contact.testBoundaryOverlap(ball2, boundary, Contact.RIGHT))
-				Contact.collisionHandler(ball2, COEFFICIENT_E, Contact.X);
-
-			if (Contact.testBodiesOverlap(ball1, ball2)) {
-				Contact.collisionHandler(ball1, ball2, COEFFICIENT_E);
+			try {
+				if (Contact.testBoundaryOverlap(ball1, boundary, Contact.BOTTOM)
+						|| Contact.testBoundaryOverlap(ball1, boundary, Contact.TOP))
+					Contact.collisionHandler(ball1, COEFFICIENT_E, Contact.Y);
+				if (Contact.testBoundaryOverlap(ball1, boundary, Contact.LEFT)
+						|| Contact.testBoundaryOverlap(ball1, boundary, Contact.RIGHT))
+					Contact.collisionHandler(ball1, COEFFICIENT_E, Contact.X);
+	
+				// Boundary test para ball2
+				if (Contact.testBoundaryOverlap(ball2, boundary, Contact.BOTTOM)
+						|| Contact.testBoundaryOverlap(ball2, boundary, Contact.TOP))
+					Contact.collisionHandler(ball2, COEFFICIENT_E, Contact.Y);
+				if (Contact.testBoundaryOverlap(ball2, boundary, Contact.LEFT)
+						|| Contact.testBoundaryOverlap(ball2, boundary, Contact.RIGHT))
+					Contact.collisionHandler(ball2, COEFFICIENT_E, Contact.X);
+	
+				if (Contact.testBodiesOverlap(ball1, ball2)) {
+					Contact.collisionHandler(ball1, ball2, COEFFICIENT_E);
+				}
+			} catch(InvalidCoefficientOfRestitutionException e) {
+				timer.stop();
+				isStoped = true;
+				JOptionPane.showMessageDialog(null, e.getMessage(), e.toString(), JOptionPane.ERROR_MESSAGE);
 			}
+			
 
 			ball1.updateConstAcc(timeIncrement);
 			ball2.updateConstAcc(timeIncrement);
