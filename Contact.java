@@ -99,7 +99,7 @@ public class Contact {
 		} else { 
 			Vec2D v1 = a.getVelocity().clone(), v2 = b.getVelocity().clone();
 	
-			Vec2D differenceVecNorm = Vec2D.getNormalized(Vec2D.substract(a.getPosition(), b.getPosition()));
+			Vec2D differenceVecNorm = Vec2D.getNormalized(Vec2D.subtract(a.getPosition(), b.getPosition()));
 			
 			double v1p = Vec2D.dot(v1, differenceVecNorm);
 			double v2p = Vec2D.dot(v2, differenceVecNorm);

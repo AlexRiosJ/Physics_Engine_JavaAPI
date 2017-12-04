@@ -88,7 +88,7 @@ public class Vec2D {
 	 * @param vectorB the vector B to be subtracted
 	 * @return A new vector of vectorA and vectorB subtracted
 	 */
-	public static Vec2D substract(Vec2D vectorA, Vec2D vectorB) {
+	public static Vec2D subtract(Vec2D vectorA, Vec2D vectorB) {
 		return new Vec2D(vectorA.getX() - vectorB.getX(), vectorA.getY() - vectorB.getY());
 	}
 
