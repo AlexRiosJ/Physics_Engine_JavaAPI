@@ -7,7 +7,6 @@ package com.rad.classes;
  * @author Alejandro Ríos, Darío Arias, Alfredo Rodriguez
  */
 public class Contact {
-	Body[] b = new Body[2];
 	public static final int TOP = 1, LEFT = 2, RIGHT = 3, BOTTOM = 4;
 	public static final int X = 0, Y = 1;
 
@@ -19,7 +18,7 @@ public class Contact {
 	 */
 	public static boolean testBodiesOverlap(Body b1, Body b2) {
 		double distance = Vec2D.distanceFromSquared(b1.getPosition(), b2.getPosition());
-		if (distance < Math.pow(b1.radius + b2.radius, 2))
+		if (distance < Math.pow(b1.getRadius() + b2.getRadius(), 2))
 			return true;
 		return false;
 	}

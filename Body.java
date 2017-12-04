@@ -8,7 +8,7 @@ package com.rad.classes;
  */
 public class Body extends Particle {
 
-	public double radius, length, height;
+	private double radius, length, height;
 
 	/**
 	 * Initializes a newly created {@code Body} object with null elements 
@@ -90,15 +90,17 @@ public class Body extends Particle {
 	 * @param radius the value of the radius
 	 */
 	public void setRadius(double radius) {
-		this.radius = radius;
+		if(radius > 0)
+			this.radius = radius;
 	}
 
 	/**
 	 * Sets the value of the Body's length.
 	 * @param radius the value of the length
 	 */
-	public void setLength(double length) {
-		this.length = length;
+	public void c(double length) {
+		if(length > 0)
+			this.length = length;
 	}
 
 	/**
@@ -106,7 +108,8 @@ public class Body extends Particle {
 	 * @param radius the value of the height
 	 */
 	public void setHeight(double height) {
-		this.height = height;
+		if(height > 0)
+			this.height = height;
 	}
 
 }
